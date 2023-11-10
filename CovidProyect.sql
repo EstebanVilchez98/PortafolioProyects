@@ -157,3 +157,50 @@ where dea.continent is not null
 
 Select * 
 from PercentPopulationVaccinated
+
+/*
+
+Queries used for Tableu Proyect
+
+*/
+
+--1.
+
+SELECT Sum(new_cases) as total_cases,sum(new_deaths) as total_deaths, sum(new_deaths)/nullif(sum(new_cases),0)*100 as DeathPercentage 
+FROM PortafolioProyect..CovidDeaths
+--WHERE location like '%states%' 
+where continent is not null
+--Group by date
+order by 1,2
+
+--Just a double check based off the data provided
+-- numbers are extremly close so will keep them - The Second includes "International" location
+
+--2.
+
+--We take these out as they not include in the above queries and want to stay consistent 
+-- European Union is part of Europe 
+
+SELECT location ,sum(new_deaths) as TotalDeathCount
+FROM PortafolioProyect..CovidDeaths
+--WHERE location like '%states%' 
+where continent is null
+and location not in ('World', 'European Union', 'International')
+Group by location
+order by TotalDeathCount desc
+
+--3.
+
+SELECT location, population, MAX(CONVERT(float,total_cases)) as HighestInfectionCount, MAX((CONVERT(float, total_cases)/population))*100 as PercentPopulationInfected  
+FROM PortafolioProyect..CovidDeaths
+--WHERE location like '%states%'
+Group By location, population
+order by PercentPopulationInfected desc
+
+--4.
+
+SELECT location, population,date, MAX(CONVERT(float,total_cases)) as HighestInfectionCount, MAX((CONVERT(float, total_cases)/population))*100 as PercentPopulationInfected  
+FROM PortafolioProyect..CovidDeaths
+--WHERE location like '%states%'
+Group By location, population, date
+order by PercentPopulationInfected desc
